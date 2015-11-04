@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Joel Turkel']
   spec.email         = ['jturkel@salsify.com']
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
+  spec.summary       = 'Delayed::Job plugin to unlock jobs from dead workers'
   spec.homepage      = 'https://github.com/salsify/delayed_job_heartbeat_plugin'
   spec.license       = 'MIT'
 

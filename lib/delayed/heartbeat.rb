@@ -1,9 +1,11 @@
 require 'delayed/heartbeat/compatibility'
 require 'delayed/heartbeat/configuration'
+require 'delayed/heartbeat/delete_worker_results'
 require 'delayed/heartbeat/plugin'
 require 'delayed/heartbeat/version'
 require 'delayed/heartbeat/worker'
 require 'delayed/heartbeat/worker_heartbeat'
+require 'delayed/heartbeat/railtie' if defined?(Rails::Railtie)
 
 module Delayed
   module Heartbeat
@@ -36,7 +38,7 @@ module Delayed
             worker.unlock_jobs(mark_attempt_failed: mark_attempt_failed)
           end
           Delayed::Heartbeat::Worker.delete_workers(workers)
-          [workers, orphaned_jobs]
+          Delayed::Heartbeat::DeleteWorkerResults.new(workers, orphaned_jobs)
         end
       end
     end

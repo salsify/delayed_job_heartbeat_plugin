@@ -56,16 +56,12 @@ describe Delayed::Heartbeat::WorkerHeartbeat, cleaner_strategy: :truncation do
     it "aborts the process" do
       expect(@worker_heartbeat).to have_received(:exit).with(false)
     end
-
-    def start_heartbeat
-      Delayed::Heartbeat::WorkerHeartbeat.new(worker_name) do |heartbeat|
-        allow(heartbeat).to receive(:exit)
-      end
-    end
   end
 
   def start_heartbeat
-    Delayed::Heartbeat::WorkerHeartbeat.new(worker_name)
+    Delayed::Heartbeat::WorkerHeartbeat.new(worker_name) do |heartbeat|
+      allow(heartbeat).to receive(:exit)
+    end
   end
 
   def stop_heartbeat
