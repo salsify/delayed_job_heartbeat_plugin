@@ -46,6 +46,8 @@ module Delayed
           Delayed::Backend::ActiveRecord::Job.clear_active_connections!
         end
       rescue => e
+        # TODO: REMOVE THIS
+        puts "Exception in heartbeat loop: #{e.message}\n#{e.backtrace.join("\n")}"
         # We don't want the worker to continue running if the heartbeat can't be written.
         # Don't use Thread.abort_on_exception because that will give Delayed::Job a chance
         # to mark the job as failed which will unlock it even though the clock

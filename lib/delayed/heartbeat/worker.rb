@@ -53,7 +53,6 @@ module Delayed
       private
 
       def mark_job_attempts_failed(jobs)
-        # TODO: Instantiating the worker is going to cause problems
         dj_worker = Delayed::Worker.new
         jobs.each do |job|
           mark_job_attempt_failed(dj_worker, job)
