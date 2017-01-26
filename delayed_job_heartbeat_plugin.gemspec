@@ -22,10 +22,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'delayed_job', '>= 4.1.0'
   spec.add_dependency 'delayed_job_active_record', '>= 4.1.0'
 
-  spec.add_development_dependency 'activerecord', ENV.fetch('RAILS_VERSION', ['>= 3.2', '< 4.3'])
+  spec.add_development_dependency 'activerecord', ENV.fetch('RAILS_VERSION', ['>= 3.2', '< 5.1'])
   spec.add_development_dependency 'coveralls'
   spec.add_development_dependency 'database_cleaner', '>= 1.2'
-  spec.add_development_dependency 'rake'
+  # rspec < 3.5 requires rake < 11.0
+  spec.add_development_dependency 'rake', '< 11.0' 
   spec.add_development_dependency 'rspec', '3.3.0'
   spec.add_development_dependency 'simplecov', '~> 0.7.1'
   spec.add_development_dependency 'timecop'
