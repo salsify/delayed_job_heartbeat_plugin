@@ -14,6 +14,10 @@ module Delayed
         model.host_name ||= Socket.gethostname
         model.label ||= Delayed::Heartbeat.configuration.worker_label || name
         model.version ||= Delayed::Heartbeat.configuration.worker_version
+
+        logger = Logger.new(STDOUT)
+        logger.debug("#################### Adding the worker #{model.name} with version #{model.version} to the delayed worker table")
+        model
       end
 
       def jobs
