@@ -2,4 +2,9 @@ sqlite3:
   adapter: sqlite3
   pool: 5
   timeout: 15000
+  # The checkout_timeout determines how long we wait before forcing a
+  # disconnect on an in-use connection. We rely on this behavior when
+  # testing shutting down workers, so this is set to a small value to
+  # ensure the tests run fast.
+  checkout_timeout: 0.01
   database: tmp/sqlite3.db

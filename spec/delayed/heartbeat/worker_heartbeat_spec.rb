@@ -39,6 +39,11 @@ describe Delayed::Heartbeat::WorkerHeartbeat, cleaner_strategy: :truncation do
     it "destroys the worker model" do
       expect(find_worker_model(worker_name)).not_to be_present
     end
+
+    it "unlocks the worker jobs" do
+      expect(job.reload.locked_by).to be_nil
+      expect(job.reload.locked_at).to be_nil
+    end
   end
 
   context "when the heartbeat times out" do
