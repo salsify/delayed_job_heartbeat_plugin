@@ -54,9 +54,20 @@ module Delayed
         exit(false)
       ensure
         @stop_reader.close
-        @worker_model.delete
-        # Note: The built-in Delayed::Plugins::ClearLocks will unlock the jobs for us
-        Delayed::Backend::ActiveRecord::Job.clear_active_connections!
+
+        # Note: The built-in Delayed::Plugins::ClearLocks will try to
+        # unlock the jobs for us, but in some cases this may fail
+        # (e.g. the worker is interrupted in a critical section and
+        # the database connection is in an unusable state). Here we
+        # first close all existing connections to release any locks on
+        # the delayed jobs/workers table, then reconnect with a known
+        # good connection to clear locks on jobs held by this worker.
+        Delayed::Backend::ActiveRecord::Job.clear_all_connections!
+
+        Delayed::Backend::ActiveRecord::Job.transaction do
+          @worker_model.clear_locks
+          @worker_model.delete
+        end
       end
 
       def update_heartbeat

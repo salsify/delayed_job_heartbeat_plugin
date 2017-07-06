@@ -38,6 +38,11 @@ module Delayed
         orphaned_jobs
       end
 
+      # Unlocks jobs held by the worker as an atomic operation.
+      def clear_locks
+        jobs.update_all(locked_at: nil, locked_by: nil)
+      end
+
       def self.dead_workers(timeout_seconds)
         where('last_heartbeat_at < ?', Time.now.utc - timeout_seconds)
       end
