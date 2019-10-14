@@ -25,7 +25,7 @@ module Delayed
       end
 
       # Returns the jobs that were unlocked
-      def unlock_jobs(mark_attempt_failed: true)
+      def unlock_jobs(mark_attempt_failed = true)
         orphaned_jobs = jobs.to_a
         return orphaned_jobs unless orphaned_jobs.present?
 

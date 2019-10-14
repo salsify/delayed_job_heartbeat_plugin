@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = Dir.glob('spec/**/*')
   spec.require_paths = ['lib']
 
-  spec.required_ruby_version = '>= 2.0'
+  spec.required_ruby_version = '>= 1.9'
 
   spec.add_dependency 'delayed_job', '>= 4.1.0'
   spec.add_dependency 'delayed_job_active_record', '>= 4.1.0'
@@ -35,6 +35,6 @@ Gem::Specification.new do |spec|
     spec.add_development_dependency 'jdbc-sqlite3'
     spec.add_development_dependency 'activerecord-jdbcsqlite3-adapter'
   else
-    spec.add_development_dependency 'sqlite3'
+    spec.add_development_dependency 'sqlite3', '~> 1.3.11'
   end
 end

@@ -16,7 +16,7 @@ describe Delayed::Heartbeat do
                          payload_object: TestJob.new)
   end
 
-  shared_examples "it destroys a worker and unlocks its jobs" do |expected_orphaned_job_attempts: nil|
+  shared_examples "it destroys a worker and unlocks its jobs" do |expected_orphaned_job_attempts|
     specify { expect(active_worker).not_to have_been_destroyed }
     specify { expect(active_job.reload.locked_by).not_to be_nil }
     specify { expect(active_job.reload.locked_at).not_to be_nil }
@@ -60,7 +60,7 @@ describe Delayed::Heartbeat do
     specify { expect(failed_orphaned_job.reload.failed_at).to be_present }
     specify { expect(TestJobWithCallbacks.called_callbacks).to eq [:failure] }
 
-    it_behaves_like "it destroys a worker and unlocks its jobs", expected_orphaned_job_attempts: 1
+    it_behaves_like "it destroys a worker and unlocks its jobs", 1
   end
 
   describe ".delete_workers_with_different_version" do
@@ -70,7 +70,7 @@ describe Delayed::Heartbeat do
       Delayed::Heartbeat.delete_workers_with_different_version(current_version)
     end
 
-    it_behaves_like "it destroys a worker and unlocks its jobs", expected_orphaned_job_attempts: 0
+    it_behaves_like "it destroys a worker and unlocks its jobs", 0
   end
 
   def create_worker_model(attributes)

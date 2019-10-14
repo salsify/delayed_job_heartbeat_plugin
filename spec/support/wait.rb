@@ -1,5 +1,5 @@
 module Wait
-  def self.for(condition_name, max_wait_time: 5, polling_interval: 0.001)
+  def self.for(condition_name, max_wait_time = 5, polling_interval = 0.001)
     wait_until = Time.now + max_wait_time.seconds
     loop do
       return if yield
