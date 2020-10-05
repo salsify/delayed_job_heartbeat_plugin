@@ -35,6 +35,6 @@ Gem::Specification.new do |spec|
     spec.add_development_dependency 'jdbc-sqlite3'
     spec.add_development_dependency 'activerecord-jdbcsqlite3-adapter'
   else
-    spec.add_development_dependency 'sqlite3'
+    spec.add_development_dependency 'sqlite3', '~> 1.3'
   end
 end
