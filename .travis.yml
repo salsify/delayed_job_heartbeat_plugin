@@ -1,3 +1,6 @@
+services:
+  - postgresql
+
 sudo: false
 language: ruby
 gemfile:
