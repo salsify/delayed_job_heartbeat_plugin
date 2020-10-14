@@ -9,7 +9,7 @@ module DelayedJobHeartbeatPlugin
     self.source_paths << File.join(File.dirname(__FILE__), 'templates')
 
     def create_migration_file
-      migration_template('migration.rb', 'db/migrate/create_delayed_workers.rb')
+      migration_template('migration.erb', 'db/migrate/create_delayed_workers.rb')
     end
 
     def self.next_migration_number(dirname)

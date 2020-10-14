@@ -1,4 +1,4 @@
-class CreateDelayedWorkers < ActiveRecord::Migration
+class CreateDelayedWorkers < ActiveRecord::Migration[<%= ActiveRecord::VERSION::MAJOR %>.<%= ActiveRecord::VERSION::MINOR %>]
 
   def change
     create_table(:delayed_workers) do |t|
