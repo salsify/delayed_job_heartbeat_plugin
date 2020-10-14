@@ -26,15 +26,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'activerecord', ['>= 5.2', '< 6.1']
   spec.add_development_dependency 'coveralls_reborn', '>= 0.18.0'
   spec.add_development_dependency 'database_cleaner', '>= 1.2'
+  spec.add_development_dependency 'pg'
   spec.add_development_dependency 'rake', '>= 12.3.3'
   spec.add_development_dependency 'rspec', '~> 3'
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'timecop'
-
-  if RUBY_PLATFORM == 'java'
-    spec.add_development_dependency 'jdbc-sqlite3'
-    spec.add_development_dependency 'activerecord-jdbcsqlite3-adapter'
-  else
-    spec.add_development_dependency 'sqlite3', '~> 1.4'
-  end
 end

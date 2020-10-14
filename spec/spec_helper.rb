@@ -30,15 +30,26 @@ Delayed::Worker.logger.level = Logger::DEBUG
 ActiveRecord::Base.logger = Delayed::Worker.logger
 ActiveRecord::Migration.verbose = false
 
-db_adapter = ENV.fetch('ADAPTER', 'sqlite3')
-config = YAML.load(File.read('spec/db/database.yml'))
-ActiveRecord::Base.establish_connection(config[db_adapter])
-require 'db/schema'
+database_name = 'delayed_job_heartbeat_plugin_test'
+database_host = ENV.fetch('PGHOST', 'localhost')
+database_port = ENV.fetch('PGPORT', 5432)
 
 RSpec.configure do |config|
   config.order = 'random'
 
   config.before(:suite) do
+    `dropdb --host #{database_host} --port #{database_port} --if-exists #{database_name} 2> /dev/null`
+    `createdb --host #{database_host} --port #{database_port} #{database_name}`
+    `psql --host #{database_host} --port #{database_port} --dbname #{database_name} --echo-all --file spec/setup_db.sql`
+
+    pg_version = `psql --host #{database_host} --port #{database_port}  --dbname #{database_name} --tuples-only --command "select version()";`.strip
+    puts "Testing with Postgres version: #{pg_version}"
+    puts "Testing with ActiveRecord #{ActiveRecord::VERSION::STRING}"
+
+    database_url = "postgres://#{database_host}:#{database_port}/#{database_name}"
+    puts "Using database #{database_url}"
+    ActiveRecord::Base.establish_connection(database_url)
+    require 'db/schema'
     DatabaseCleaner.clean_with(:truncation)
   end
 
