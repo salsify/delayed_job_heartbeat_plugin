@@ -44,7 +44,7 @@ describe Delayed::Heartbeat::WorkerHeartbeat, cleaner_strategy: :truncation do
   context "when the heartbeat times out" do
     let(:heartbeat_config) do
       # Create a configuration where heartbeat is updated less frequently than the timeout
-      Delayed::Heartbeat::Configuration.new(heartbeat_interval_seconds: 0.1,
+      Delayed::Heartbeat::Configuration.new(heartbeat_interval_seconds: 0.001,
                                             heartbeat_timeout_seconds: 0.00000001,
                                             worker_termination_enabled: true)
     end
