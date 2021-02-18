@@ -1,0 +1,92 @@
+version: 2.1
+jobs:
+  lint:
+      docker:
+        - image: salsify/ruby_ci:2.6.6
+      working_directory: ~/delayed_job_heartbeat_plugin
+      steps:
+        - checkout
+        - restore_cache:
+            keys:
+              - v1-gems-ruby-2.6.6-{{ checksum "delayed_job_heartbeat_plugin.gemspec" }}-{{ checksum "Gemfile" }}
+              - v1-gems-ruby-2.6.6-
+        - run:
+            name: Install Gems
+            command: |
+              if ! bundle check --path=vendor/bundle; then
+                bundle install --path=vendor/bundle --jobs=4 --retry=3
+                bundle clean
+              fi
+        - save_cache:
+            key: v1-gems-ruby-2.6.6-{{ checksum "delayed_job_heartbeat_plugin.gemspec" }}-{{ checksum "Gemfile" }}
+            paths:
+              - "vendor/bundle"
+              - "gemfiles/vendor/bundle"
+        - run:
+            name: Run Rubocop
+            command: bundle exec rubocop --config .rubocop.yml
+  test:
+      parameters:
+        gemfile:
+          type: string
+        ruby_version:
+          type: string
+      docker:
+        - image: salsify/ruby_ci:<< parameters.ruby_version >>
+          environment:
+            DB_USER: "circleci"
+        - image: circleci/postgres:9.6
+          environment:
+            POSTGRES_USER: "circleci"
+            POSTGRES_DB: "circle_test"
+            POSTGRES_HOST_AUTH_METHOD: "trust"
+      environment:
+        RACK_ENV: "test"
+        RAILS_ENV: "test"
+        CIRCLE_TEST_REPORTS: "test-results"
+        BUNDLE_GEMFILE: << parameters.gemfile >>
+      working_directory: ~/delayed_job_heartbeat_plugin
+      steps:
+        - checkout
+        - restore_cache:
+            keys:
+              - v1-gems-ruby-<< parameters.ruby_version >>-{{ checksum "delayed_job_heartbeat_plugin.gemspec" }}-{{ checksum "<< parameters.gemfile >>" }}
+              - v1-gems-ruby-<< parameters.ruby_version >>-
+        - run:
+            name: Install Gems
+            command: |
+              if ! bundle check --path=vendor/bundle; then
+                bundle install --path=vendor/bundle --jobs=4 --retry=3
+                bundle clean
+              fi
+        - save_cache:
+            key: v1-gems-ruby-<< parameters.ruby_version >>-{{ checksum "delayed_job_heartbeat_plugin.gemspec" }}-{{ checksum "<< parameters.gemfile >>" }}
+            paths:
+              - "vendor/bundle"
+              - "gemfiles/vendor/bundle"
+        - run:
+            name: Wait for Database
+            command: dockerize -wait tcp://localhost:5432 -timeout 60s
+        - run:
+            name: Wait for Database User
+            command: t=30; for i in `seq $t`; do psql -h localhost -p 5432 -U circleci -d circle_test -c '\q' && break; [ $i -eq $t ] && return 2; sleep 1; done;
+        - run:
+            name: Run Tests
+            command: |
+              bundle exec rspec --format RspecJunitFormatter --out $CIRCLE_TEST_REPORTS/rspec/junit.xml --format progress spec
+        - store_test_results:
+            path: "test-results"
+workflows:
+  build:
+    jobs:
+      - lint
+      - test:
+          matrix:
+            parameters:
+              gemfile:
+                - "gemfiles/rails_5.2.gemfile"
+                - "gemfiles/rails_6.0.gemfile"
+              ruby_version:
+                - "2.6.6"
+                - "2.7.2"
+                - "3.0.0"
