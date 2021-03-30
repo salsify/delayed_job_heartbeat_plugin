@@ -23,12 +23,14 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'delayed_job_active_record', '>= 4.1.0'
 
   spec.add_development_dependency 'appraisal'
-  spec.add_development_dependency 'activerecord', ['>= 5.2', '< 6.1']
+  spec.add_development_dependency 'activerecord', ['>= 5.2', '< 7']
+  spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'coveralls_reborn', '>= 0.18.0'
   spec.add_development_dependency 'database_cleaner', '>= 1.2'
   spec.add_development_dependency 'pg'
-  spec.add_development_dependency 'rake', '>= 12.3.3'
+  spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3'
+  spec.add_development_dependency 'rspec_junit_formatter'
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'timecop'
 end
