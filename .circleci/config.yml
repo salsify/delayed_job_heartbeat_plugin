@@ -1,0 +1,63 @@
+version: 2.1
+jobs:
+  test:
+    parameters:
+      gemfile:
+        type: string
+      ruby_version:
+        type: string
+    docker:
+      - image: salsify/ruby_ci:<< parameters.ruby_version >>
+      - image: circleci/postgres:9.6
+        environment:
+          POSTGRES_USER: "circleci"
+          POSTGRES_DB: "circle_test"
+          POSTGRES_HOST_AUTH_METHOD: "trust"
+    environment:
+      CIRCLE_TEST_REPORTS: "test-results"
+      BUNDLE_GEMFILE: << parameters.gemfile >>
+    working_directory: ~/delayed_job_heartbeat_plugin
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-gems-ruby-<< parameters.ruby_version >>-{{ checksum "delayed_job_heartbeat_plugin.gemspec" }}-{{ checksum "<< parameters.gemfile >>" }}
+            - v1-gems-ruby-<< parameters.ruby_version >>-
+      - run:
+          name: Install Gems
+          command: |
+            if ! bundle check --path=vendor/bundle; then
+              bundle install --path=vendor/bundle --jobs=4 --retry=3
+              bundle clean
+            fi
+      - save_cache:
+          key: v1-gems-ruby-<< parameters.ruby_version >>-{{ checksum "delayed_job_heartbeat_plugin.gemspec" }}-{{ checksum "<< parameters.gemfile >>" }}
+          paths:
+            - "vendor/bundle"
+            - "gemfiles/vendor/bundle"
+      - run:
+          name: Wait for Database
+          command: dockerize -wait tcp://localhost:5432 -timeout 60s
+      - run:
+          name: Wait for Database User
+          command: t=60; for i in `seq $t`; do psql -h localhost -p 5432 -U circleci -d circle_test -c '\q' && break; [ $i -eq $t ] && return 2; sleep 1; done;
+      - run:
+          name: Run Tests
+          command: |
+            bundle exec rspec --format RspecJunitFormatter --out $CIRCLE_TEST_REPORTS/rspec/junit.xml --format progress spec
+      - store_test_results:
+          path: "test-results"
+workflows:
+  build:
+    jobs:
+      - test:
+          matrix:
+            parameters:
+              ruby_version:
+                - "2.5.8"
+                - "2.6.5"
+                - "2.7.2"
+              gemfile:
+                - "gemfiles/rails_5.2.gemfile"
+                - "gemfiles/rails_6.0.gemfile"
+                - "gemfiles/rails_6.1.gemfile"
