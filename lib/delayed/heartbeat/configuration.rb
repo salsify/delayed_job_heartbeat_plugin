@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Delayed
   module Heartbeat
     class Configuration
@@ -22,7 +24,7 @@ module Delayed
 
         self.heartbeat_timeout_seconds ||= 180
         self.heartbeat_interval_seconds ||= 60
-        self.on_worker_termination ||= Proc.new { }
+        self.on_worker_termination ||= Proc.new {}
       end
     end
   end

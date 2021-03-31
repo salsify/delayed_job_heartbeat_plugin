@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'delayed/heartbeat/compatibility'
 
 module Delayed
@@ -43,7 +45,7 @@ module Delayed
       end
 
       def self.workers_with_different_version(current_version)
-        where('version != ?',  current_version)
+        where('version != ?', current_version)
       end
 
       def self.delete_workers(workers)

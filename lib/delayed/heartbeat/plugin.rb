@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'set'
 
 module Delayed
@@ -6,12 +8,10 @@ module Delayed
 
       callbacks do |lifecycle|
         lifecycle.before(:execute) do |worker|
-          if Delayed::Heartbeat.configuration.enabled?
-            @heartbeat = Delayed::Heartbeat::WorkerHeartbeat.new(worker.name)
-          end
+          @heartbeat = Delayed::Heartbeat::WorkerHeartbeat.new(worker.name) if Delayed::Heartbeat.configuration.enabled?
         end
 
-        lifecycle.after(:execute) do |worker|
+        lifecycle.after(:execute) do |_worker|
           @heartbeat.stop if @heartbeat
         end
       end
@@ -19,4 +19,3 @@ module Delayed
     end
   end
 end
-

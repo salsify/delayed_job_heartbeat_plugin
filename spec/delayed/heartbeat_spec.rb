@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Delayed::Heartbeat do
@@ -78,5 +80,3 @@ describe Delayed::Heartbeat do
   end
 
 end
-
-

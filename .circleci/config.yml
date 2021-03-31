@@ -1,5 +1,30 @@
 version: 2.1
 jobs:
+  lint:
+    docker:
+      - image: salsify/ruby_ci:2.5.8
+    working_directory: ~/delayed_job_heartbeat_plugin
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-gems-ruby-2.5.8-{{ checksum "delayed_job_heartbeat_plugin.gemspec" }}-{{ checksum "Gemfile" }}
+            - v1-gems-ruby-2.5.8-
+      - run:
+          name: Install Gems
+          command: |
+            if ! bundle check --path=vendor/bundle; then
+              bundle install --path=vendor/bundle --jobs=4 --retry=3
+              bundle clean
+            fi
+      - save_cache:
+          key: v1-gems-ruby-2.5.8-{{ checksum "delayed_job_heartbeat_plugin.gemspec" }}-{{ checksum "Gemfile" }}
+          paths:
+            - "vendor/bundle"
+            - "gemfiles/vendor/bundle"
+      - run:
+          name: Run Rubocop
+          command: bundle exec rubocop --config .rubocop.yml
   test:
     parameters:
       gemfile:
@@ -50,6 +75,7 @@ jobs:
 workflows:
   build:
     jobs:
+      - lint
       - test:
           matrix:
             parameters:

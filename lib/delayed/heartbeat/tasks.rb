@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :delayed do
   namespace :heartbeat do
     desc 'Cleans up workers that have not heartbeated recently.'
@@ -18,7 +20,7 @@ namespace :delayed do
     end
 
     def verbose?
-      ENV['VERBOSE'].to_s.downcase == 'true'
+      ENV['VERBOSE'].to_s.casecmp('true').zero?
     end
   end
 end

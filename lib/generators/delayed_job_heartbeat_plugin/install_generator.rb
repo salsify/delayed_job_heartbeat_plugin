@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails/generators'
 require 'rails/generators/migration'
 require 'rails/generators/active_record'
@@ -6,7 +8,7 @@ module DelayedJobHeartbeatPlugin
   class InstallGenerator < Rails::Generators::Base
     include Rails::Generators::Migration
 
-    self.source_paths << File.join(File.dirname(__FILE__), 'templates')
+    source_paths << File.join(File.dirname(__FILE__), 'templates')
 
     def create_migration_file
       migration_template('migration.erb', 'db/migrate/create_delayed_workers.rb')
