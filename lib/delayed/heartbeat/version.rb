@@ -1,7 +1,7 @@
-# encoding: UTF-8
+# frozen_string_literal: true
 
 module Delayed
   module Heartbeat
-    VERSION = '0.3.0'.freeze
+    VERSION = '0.3.0'
   end
 end

@@ -1,12 +1,13 @@
-$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
+# frozen_string_literal: true
+
+$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 
 require 'simplecov'
 require 'coveralls'
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-    SimpleCov::Formatter::HTMLFormatter,
-    Coveralls::SimpleCov::Formatter
-]
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
+  [SimpleCov::Formatter::HTMLFormatter, Coveralls::SimpleCov::Formatter]
+)
 SimpleCov.start do
   add_filter 'spec'
 end
@@ -38,12 +39,12 @@ RSpec.configure do |config|
   config.order = 'random'
 
   config.before(:suite) do
-    `dropdb --host #{database_host} --port #{database_port} --if-exists #{database_name} 2> /dev/null`
-    `createdb --host #{database_host} --port #{database_port} #{database_name}`
-    `psql --host #{database_host} --port #{database_port} --dbname #{database_name} --echo-all --file spec/setup_db.sql`
+    db_connection_args = "--host #{database_host} --port #{database_port}"
+    `dropdb #{db_connection_args} --if-exists #{database_name} 2> /dev/null`
+    `createdb #{db_connection_args} #{database_name}`
 
-    pg_version = `psql --host #{database_host} --port #{database_port}  --dbname #{database_name} --tuples-only --command "select version()";`.strip
-    puts "Testing with Postgres version: #{pg_version}"
+    pg_version = `psql #{db_connection_args} --dbname #{database_name} --tuples-only --command "select version()";`
+    puts "Testing with Postgres version: #{pg_version.strip}"
     puts "Testing with ActiveRecord #{ActiveRecord::VERSION::STRING}"
 
     database_url = "postgres://#{database_host}:#{database_port}/#{database_name}"
@@ -53,15 +54,15 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:truncation)
   end
 
-  config.before(:each) do |example|
+  config.before do |example|
     DatabaseCleaner.strategy = example.metadata.fetch(:cleaner_strategy, :transaction)
   end
 
-  config.before(:each) do
+  config.before do
     DatabaseCleaner.start
   end
 
-  config.after(:each) do
+  config.after do
     DatabaseCleaner.clean
   end
 end

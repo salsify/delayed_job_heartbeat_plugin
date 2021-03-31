@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'delayed/heartbeat/compatibility'
 require 'delayed/heartbeat/configuration'
 require 'delayed/heartbeat/delete_worker_results'
@@ -16,9 +18,7 @@ module Delayed
         yield(configuration) if block_given?
       end
 
-      def configuration
-        @configuration
-      end
+      attr_reader :configuration
 
       def delete_workers_with_different_version(current_version = configuration.worker_version)
         old_workers = Delayed::Heartbeat::Worker.workers_with_different_version(current_version)
@@ -34,8 +34,8 @@ module Delayed
 
       def cleanup_workers(workers, mark_attempt_failed: true)
         Delayed::Heartbeat::Worker.transaction do
-          worker_job_map = workers.each_with_object(Hash.new) do |worker, worker_job_map|
-            worker_job_map[worker] = worker.unlock_jobs(mark_attempt_failed: mark_attempt_failed)
+          worker_job_map = workers.each_with_object(Hash.new) do |worker, result|
+            result[worker] = worker.unlock_jobs(mark_attempt_failed: mark_attempt_failed)
           end
           Delayed::Heartbeat::Worker.delete_workers(workers)
           Delayed::Heartbeat::DeleteWorkerResults.new(worker_job_map)

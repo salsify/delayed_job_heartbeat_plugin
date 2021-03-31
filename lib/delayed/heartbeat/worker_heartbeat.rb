@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Delayed
   module Heartbeat
     class WorkerHeartbeat
@@ -40,12 +42,13 @@ module Delayed
       def run_heartbeat_loop
         loop do
           break if sleep_interruptibly(heartbeat_interval)
+
           update_heartbeat
           # Return the connection back to the pool since we won't be needing
           # it again for a while.
           Delayed::Backend::ActiveRecord::Job.clear_active_connections!
         end
-      rescue => e
+      rescue StandardError => e
         # We don't want the worker to continue running if the heartbeat can't be written.
         # Don't use Thread.abort_on_exception because that will give Delayed::Job a chance
         # to mark the job as failed which will unlock it even though the clock
@@ -65,8 +68,8 @@ module Delayed
         if heartbeat_delta_seconds < heartbeat_timeout_seconds || self_termination_disabled?
           @worker_model.update_column(:last_heartbeat_at, now)
         else
-          raise Timeout::Error, "Worker heartbeat not updated for #{heartbeat_delta_seconds} seconds which " \
-              "exceeds timeout\n. Current job: #{ @worker_model.job.inspect}"
+          raise Timeout::Error.new("Worker heartbeat not updated for #{heartbeat_delta_seconds} seconds which " \
+              "exceeds timeout\n. Current job: #{@worker_model.job.inspect}")
         end
       end
 
