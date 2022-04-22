@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 appraise 'rails-6.0' do
   gem 'activerecord', '~> 6.0.4'
   gem 'activesupport', '~> 6.0.4'
