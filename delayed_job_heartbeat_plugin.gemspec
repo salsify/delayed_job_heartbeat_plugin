@@ -25,12 +25,12 @@ Gem::Specification.new do |spec|
   spec.test_files    = Dir.glob('spec/**/*')
   spec.require_paths = ['lib']
 
-  spec.required_ruby_version = '>= 2.5'
+  spec.required_ruby_version = '>= 2.7'
 
-  spec.add_dependency 'delayed_job'
+  spec.add_dependency 'delayed_job', '>= 4.1.0'
   spec.add_dependency 'delayed_job_active_record', '>= 4.1.0'
 
-  spec.add_development_dependency 'activerecord', ['>= 5.2', '< 7']
+  spec.add_development_dependency 'activerecord', ['>= 5.2', '< 7.1']
   spec.add_development_dependency 'appraisal'
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'coveralls_reborn', '>= 0.18.0'

@@ -1,5 +1,11 @@
 # Changelog
 
+### 0.5.0
+- Drop support for ruby < 2.7
+- Add support for ruby 3.1
+- Drop Rails 5.2
+- Add Rails 7.0
+
 ### 0.4.0
 - Use frozen string literals.
 
