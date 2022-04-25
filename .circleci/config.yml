@@ -35,7 +35,7 @@ jobs:
         - image: salsify/ruby_ci:<< parameters.ruby_version >>
           environment:
             DB_USER: "circleci"
-        - image: circleci/postgres:9.6
+        - image: cimg/postgres:12.7
           environment:
             POSTGRES_USER: "circleci"
             POSTGRES_DB: "circle_test"
