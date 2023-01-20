@@ -35,7 +35,7 @@ jobs:
         - image: salsify/ruby_ci:<< parameters.ruby_version >>
           environment:
             DB_USER: "circleci"
-        - image: cimg/postgres:12.7
+        - image: cimg/postgres:12.9
           environment:
             POSTGRES_USER: "circleci"
             POSTGRES_DB: "circle_test"
@@ -43,6 +43,8 @@ jobs:
       environment:
         RACK_ENV: "test"
         RAILS_ENV: "test"
+        DB_USER: "circleci"
+        ADMIN_DB_NAME: "circle_test"
         CIRCLE_TEST_REPORTS: "test-results"
         BUNDLE_GEMFILE: << parameters.gemfile >>
       working_directory: ~/delayed_job_heartbeat_plugin
