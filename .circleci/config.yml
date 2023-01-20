@@ -2,14 +2,14 @@ version: 2.1
 jobs:
   lint:
       docker:
-        - image: salsify/ruby_ci:2.7.6
+        - image: salsify/ruby_ci:2.7.7
       working_directory: ~/delayed_job_heartbeat_plugin
       steps:
         - checkout
         - restore_cache:
             keys:
-              - v1-gems-ruby-2.7.6-{{ checksum "delayed_job_heartbeat_plugin.gemspec" }}-{{ checksum "Gemfile" }}
-              - v1-gems-ruby-2.7.6-
+              - v1-gems-ruby-2.7.7-{{ checksum "delayed_job_heartbeat_plugin.gemspec" }}-{{ checksum "Gemfile" }}
+              - v1-gems-ruby-2.7.7-
         - run:
             name: Install Gems
             command: |
@@ -18,7 +18,7 @@ jobs:
                 bundle clean
               fi
         - save_cache:
-            key: v1-gems-ruby-2.7.6-{{ checksum "delayed_job_heartbeat_plugin.gemspec" }}-{{ checksum "Gemfile" }}
+            key: v1-gems-ruby-2.7.7-{{ checksum "delayed_job_heartbeat_plugin.gemspec" }}-{{ checksum "Gemfile" }}
             paths:
               - "vendor/bundle"
               - "gemfiles/vendor/bundle"
@@ -35,7 +35,7 @@ jobs:
         - image: salsify/ruby_ci:<< parameters.ruby_version >>
           environment:
             DB_USER: "circleci"
-        - image: cimg/postgres:12.7
+        - image: cimg/postgres:12.9
           environment:
             POSTGRES_USER: "circleci"
             POSTGRES_DB: "circle_test"
@@ -43,6 +43,8 @@ jobs:
       environment:
         RACK_ENV: "test"
         RAILS_ENV: "test"
+        DB_USER: "circleci"
+        ADMIN_DB_NAME: "circle_test"
         CIRCLE_TEST_REPORTS: "test-results"
         BUNDLE_GEMFILE: << parameters.gemfile >>
       working_directory: ~/delayed_job_heartbeat_plugin
@@ -88,6 +90,7 @@ workflows:
                 - "gemfiles/rails_6.1.gemfile"
                 - "gemfiles/rails_7.0.gemfile"
               ruby_version:
-                - "2.7.6"
-                - "3.0.4"
-                - "3.1.2"
+                - "2.7.7"
+                - "3.0.5"
+                - "3.1.3"
+                - "3.2.0"
