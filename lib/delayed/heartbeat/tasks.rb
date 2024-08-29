@@ -16,7 +16,7 @@ namespace :delayed do
 
     def print_results(results)
       puts "Deleted #{results.workers.size} and unlocked #{results.unlocked_jobs.size} orphaned jobs"
-      puts results.to_s if verbose? && results.present?
+      puts results if verbose? && results.present?
     end
 
     def verbose?

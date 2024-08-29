@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.0
+
+- Drop support for Ruby < 3.1
+- Drop Rails 6.0
+- Add Rails 7.2
+  **Thanks [@DRSisco](https://github.com/DRSisco)**
+
 ## 0.5.0
 
 - Drop support for ruby < 2.7
