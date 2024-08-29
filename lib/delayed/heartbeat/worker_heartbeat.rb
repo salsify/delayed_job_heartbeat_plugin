@@ -46,7 +46,7 @@ module Delayed
           update_heartbeat
           # Return the connection back to the pool since we won't be needing
           # it again for a while.
-          Delayed::Backend::ActiveRecord::Job.clear_active_connections!
+          Delayed::Backend::ActiveRecord::Job.connection_handler.clear_active_connections!
         end
       rescue StandardError => e
         # We don't want the worker to continue running if the heartbeat can't be written.
@@ -59,7 +59,7 @@ module Delayed
         @stop_reader.close
         @worker_model.delete
         # NOTE: The built-in Delayed::Plugins::ClearLocks will unlock the jobs for us
-        Delayed::Backend::ActiveRecord::Job.clear_active_connections!
+        Delayed::Backend::ActiveRecord::Job.connection_handler.clear_active_connections!
       end
 
       def update_heartbeat
