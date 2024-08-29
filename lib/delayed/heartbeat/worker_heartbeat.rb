@@ -58,7 +58,7 @@ module Delayed
       ensure
         @stop_reader.close
         @worker_model.delete
-        # Note: The built-in Delayed::Plugins::ClearLocks will unlock the jobs for us
+        # NOTE: The built-in Delayed::Plugins::ClearLocks will unlock the jobs for us
         Delayed::Backend::ActiveRecord::Job.clear_active_connections!
       end
 

@@ -42,7 +42,7 @@ describe Delayed::Heartbeat do
 
     let!(:failed_orphaned_job) do
       Delayed::Job.create!(locked_by: dead_worker.name, locked_at: dead_worker.last_heartbeat_at,
-          payload_object: TestJobWithCallbacks.new) do |job|
+                           payload_object: TestJobWithCallbacks.new) do |job|
         job.attempts = max_attempts - 1
       end
     end
