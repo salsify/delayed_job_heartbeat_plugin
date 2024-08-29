@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0
+
+- Add support for Rails 7.2
+
 ## 0.5.0
 
 - Drop support for ruby < 2.7
